@@ -1,10 +1,10 @@
 use std::net::UdpSocket;
 use std::{str, io};
-
+//CLIENT
 fn main(){
-    let socket = UdpSocket::bind("127.0.0.1:8000").expect("Could not bind socket");
+    let socket = UdpSocket::bind("0.0.0.0:8000").expect("Could not bind socket");
 
-    socket.connect("127.0.0.1:8888").expect("Could not connect to server");
+    socket.connect("0.0.0.0:8888").expect("Could not connect to server");
 
     loop {
         let mut input = String::new();
