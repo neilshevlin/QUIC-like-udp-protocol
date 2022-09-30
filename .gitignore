@@ -1,4 +1,6 @@
 /server/target
 /client/target
 /worker/target
+/atokio_client/target
+/atokio_test/target
 .DS_Store
