@@ -5,7 +5,7 @@ use std::{env, str};
 //SERVER
 fn main(){
     // bind ot the local address on a given port and handle the error
-    let server_socket = UdpSocket::bind("0.0.0.0:8888").expect("Could not bind socket");
+    let server_socket = UdpSocket::bind("0.0.0.0:8080").expect("Could not bind socket");
 
     loop {
         // There is no data to be read, so we will wait for it
@@ -29,7 +29,7 @@ fn simulate_delay_dispatch(server_sock: UdpSocket, src: SocketAddr, buf: &[u8], 
 }
 
 fn dispatch_to_worker(socket: UdpSocket, src: SocketAddr, buf: &[u8], amt: usize){
-    socket.connect("0.0.0.0:8080").expect("Could not connect to worker");
+    socket.connect("0.0.0.0:8888").expect("Could not connect to worker");
 
     let mut buffer = [0u8; 1500];
     socket.send(&buf[..amt]).expect("Failed to send data");
