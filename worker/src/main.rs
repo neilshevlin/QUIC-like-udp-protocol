@@ -4,7 +4,7 @@ use std::{env, str};
 
 fn main(){
 //    setup a worker server that takes a request from the server and respods to it
-    let socket = UdpSocket::bind("0.0.0.0:8080").expect("Could not bind socket");
+    let socket = UdpSocket::bind("0.0.0.0:8888").expect("Could not bind socket");
 
     loop {
         let mut buf = [0u8; 1500];
