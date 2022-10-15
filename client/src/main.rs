@@ -19,15 +19,6 @@ impl Client {
         } = self;
 
         loop {
-            if let Some((_size, _peer)) = to_send {
-                let mut data = vec![0; 1350];
-                let len = socket.recv(&mut data).await?;
-                println!(
-                    "Received {} bytes:\n{}",
-                    len,
-                    String::from_utf8_lossy(&data[..len])
-                );
-            }
 
             let mut input  = String::new();
             io::stdin().read_line(&mut input)?;
