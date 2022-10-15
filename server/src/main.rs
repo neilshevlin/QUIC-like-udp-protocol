@@ -2,7 +2,8 @@ use std::error::Error;
 use std::net::SocketAddr;
 use std::{env, io};
 use tokio::net::UdpSocket;
-
+use std::time::Duration;
+use tokio::io::AsyncReadExt;
 struct Server {
     socket: UdpSocket,
     buf: Vec<u8>,
@@ -45,13 +46,21 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     Ok(())
 }
+async fn file_dispatch(socket: &UdpSocket, buf: &[u8], size: usize, peer: SocketAddr) -> io::Result<()> {
+    tokio::time::sleep(Duration::from_secs(2)).await;
+    let mut file = tokio::fs::File::open("test.txt").await?;
+    let mut buf = vec![0; 1024];
+
+    file.read(&mut buf).await?;
+    socket.send_to(&buf, &peer).await?;
+    Ok(())
+}
 // async handle_client function that returns a future
 async fn handle_client(socket: &UdpSocket, buf: &Vec<u8>, size: usize, peer: SocketAddr) -> Result<(), Box<dyn Error>> {
 
     if valid_request(&buf[..size]) {
-        let _amt = socket.send_to(b"Recieved request", &peer).await?;
-        println!("VALID REQUEST - Sent acknowledgemnt to {}", peer);
-        
+        // dispatch to get file
+        file_dispatch(socket, &buf, size, peer).await?;
 
     } else {
         let _amt = socket.send_to(b"Invalid request recieved", &peer).await?;
