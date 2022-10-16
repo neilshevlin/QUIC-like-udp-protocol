@@ -4,6 +4,7 @@ use std::io::{stdin, Read};
 use std::net::SocketAddr;
 use tokio::net::UdpSocket;
 use std::{io};
+use std::time::Duration;
 
 struct Client {
     socket: UdpSocket,
@@ -14,21 +15,11 @@ impl Client {
     async fn run(self) -> Result<(), io::Error> {
         let Client {
             socket,
-            buf: _,
-            to_send,
+            mut buf,
+            mut to_send,
         } = self;
 
         loop {
-            if let Some((_size, _peer)) = to_send {
-                let mut data = vec![0; 1350];
-                let len = socket.recv(&mut data).await?;
-                println!(
-                    "Received {} bytes:\n{}",
-                    len,
-                    String::from_utf8_lossy(&data[..len])
-                );
-            }
-
             let mut input  = String::new();
             io::stdin().read_line(&mut input)?;
             socket.send(input.as_bytes()).await?;
@@ -39,6 +30,7 @@ impl Client {
                 len,
                 String::from_utf8_lossy(&data[..len])
             );
+            
         }
     }
 }
@@ -52,7 +44,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // We use port 0 to let the operating system allocate an available port for us.
     let _local_addr: SocketAddr = env::args()
         .nth(2)
-        .unwrap_or_else(|| "127.0.0.1:8000".into())
+        .unwrap_or_else(|| "127.0.0.1:0".into())
         .parse()?;
 
     let socket = UdpSocket::bind(_local_addr).await?;
@@ -67,6 +59,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     };
 
     client.run().await?;
+
     Ok(())
 }
 
